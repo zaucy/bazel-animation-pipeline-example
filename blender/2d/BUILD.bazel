@@ -23,10 +23,18 @@ magick_genrule(
     cmd = "convert -dispose 3 -delay 1x30 -loop 0 $(locations :frames) $(location 2d.mp4)",
 )
 
+magick_genrule(
+    name = "spritesheet",
+    srcs = [":frames"],
+    outs = ["spritesheet.png"],
+    cmd = "montage -geometry 100% -background transparent $(locations :frames) $(location spritesheet.png)",
+)
+
 filegroup(
     name = "2d",
     srcs = [
         ":gif",
         ":mp4",
+        ":spritesheet",
     ],
 )
