@@ -1,0 +1,32 @@
+load("@rules_blender//:index.bzl", "blender_render")
+load("@rules_imagemagick//:index.bzl", "magick_genrule")
+
+blender_render(
+    name = "frames",
+    blend_file = "rotating_suzanne_2d.blend",
+    render_format = "PNG",
+    frame_start = 0,
+    frame_end = 59,
+)
+
+magick_genrule(
+    name = "gif",
+    srcs = [":frames"],
+    outs = ["2d.gif"],
+    cmd = "convert -dispose 3 -delay 1x30 -loop 0 $(locations :frames) $(location 2d.gif)",
+)
+
+magick_genrule(
+    name = "mp4",
+    srcs = [":frames"],
+    outs = ["2d.mp4"],
+    cmd = "convert -dispose 3 -delay 1x30 -loop 0 $(locations :frames) $(location 2d.mp4)",
+)
+
+filegroup(
+    name = "2d",
+    srcs = [
+        ":gif",
+        ":mp4",
+    ],
+)
